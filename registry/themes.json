@@ -1,0 +1,30 @@
+{
+  "Light": {
+    "PrimaryTextColor": "000000",
+    "DividersColor": "cdcdcd",
+    "TextFieldPlaceholderTextColor": "505050",
+    "SwitchTrackColor": "d7d7d7",
+    "ScrollBarColor": "000000",
+    "SwitchThumbColor": "141414",
+    "WindowBackgroundColor": "ebebeb",
+    "DropdownToggleColor": "d7d7d7",
+    "SecondaryTextColor": "505050",
+    "TextFieldBackgroundColor": "d7d7d7",
+    "DropdownListColor": "d7d7d7",
+    "HighlightColor": "ff4141"
+  },
+  "Dark": {
+    "PrimaryTextColor": "ffffff",
+    "DividersColor": "323232",
+    "TextFieldPlaceholderTextColor": "afafaf",
+    "SwitchTrackColor": "282828",
+    "ScrollBarColor": "ffffff",
+    "SwitchThumbColor": "ffffff",
+    "WindowBackgroundColor": "141414",
+    "DropdownToggleColor": "282828",
+    "SecondaryTextColor": "afafaf",
+    "TextFieldBackgroundColor": "282828",
+    "DropdownListColor": "282828",
+    "HighlightColor": "ff4141"
+  }
+}
