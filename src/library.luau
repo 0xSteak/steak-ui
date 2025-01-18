@@ -8,7 +8,8 @@
 ]]
 
 local Library = {
-    Icons = {}
+    Icons = {},
+    Themes = {}
 }
 
 -- Import Module from Github repository
@@ -31,7 +32,17 @@ Library.Elements = {
 }
 
 -- ( Importing Themes )
-Library.Themes = Registry.GetThemes()
+local Themes = Registry.GetThemes()
+-- Validating Themes
+for _, theme in Themes do
+    local success, result = Utils.ValidateThemeFormat(theme)
+
+    if not success then
+        error(result)
+    else
+        Library.Themes[theme.Name] = result
+    end
+end
 
 -- ( Creating ScreenGui )
 local ScreenGui = Instance.new("ScreenGui")
@@ -40,9 +51,19 @@ ScreenGui.ResetOnSpawn = false
 ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Global
 Library.ScreenGui = ScreenGui
 
+-- ( Library Methods )
+
 -- Sets up the Library before using it
 function Library:Setup(librarySettings, userSettings)
     local Library = self
+
+    -- Check arguments type
+    if librarySettings and typeof(librarySettings) ~= "table" then
+        error(`Invalid argument #1 (expected "table", got "{typeof(librarySettings)}")`)
+    end
+    if userSettings and typeof(userSettings) ~= "table" then
+        error(`Invalid argument #2 (expected "table", got "{typeof(userSettings)}")`)
+    end
 
     -- Initializing tables
     Library.Settings = {}
@@ -50,9 +71,9 @@ function Library:Setup(librarySettings, userSettings)
 
     -- Technical settings of the library
     for setting, value in Registry.DefaultSettings do
-        -- If setting exists in "options" argument
+        -- Check if setting exists in "options" argument
         if librarySettings[setting] then
-            -- If type is the same
+            -- Check if type is the same
             if typeof(librarySettings[setting]) == typeof(value) then
                 Library.Settings[setting] = librarySettings[setting]
             else
@@ -66,11 +87,15 @@ function Library:Setup(librarySettings, userSettings)
 
     -- Settings that can be changed by the user
     for setting, value in Registry.DefaultUserSettings do
-        -- If setting exists in "options" argument
+        -- Check if setting exists in "options" argument
         if userSettings[setting] then
-            -- If type is the same
+            -- Check if setting is theme and this theme exists
+            if setting == "Theme" and not Library.Themes[value] then
+                error(`Theme "{value}" not found.`)
+            end
+            -- Check if type is the same
             if typeof(userSettings[setting]) == typeof(value) then
-                Library.Settings[setting] = userSettings[setting]
+                Library.UserSettings[setting] = userSettings[setting]
             else
                 error(`Invalid type for option "{setting}": expected "{typeof(value)}", got "{typeof(userSettings[setting])}"`)
             end
@@ -78,6 +103,39 @@ function Library:Setup(librarySettings, userSettings)
             -- Set setting value as default
             Library.UserSettings[setting] = value
         end
+    end
+end
+
+-- Imports a new Theme
+function Library:ImportTheme(theme)
+    local success, result = Utils.ValidateThemeFormat(theme)
+
+    if not success then
+        error(result)
+    end
+
+    if Library.Themes[result.Name] then
+        warn(`Theme "{result.Name}" already exists. It will be overridden`)
+    end
+
+    Library.Themes[result.Name] = result
+end
+
+-- Imports a new Icon
+function Library:ImportRawIcon(name, icon)
+    local success, message = Utils.ValidateIconFormat(name, icon)
+    if success then
+        Library.Icons[name] = icon
+    else
+        error(message)
+    end
+end
+
+-- Imports Icon from Registry
+function Library.ImportIcon(name)
+    local icon = Registry.GetIcon(name)
+    if icon then
+        Library.Icons[name] = icon
     end
 end
 

@@ -36,7 +36,9 @@ function Registry.GetIcon(name)
     local icons = HttpService:JSONDecode(iconsJSON)
 
     -- Icon data (sheet id, position, size)
-    local data = icons[name]
+    local data = icons.icons[name]
+
+    if not data then return end
 
     -- Sheet is a Sprite Sheet of Icons
     local sheetIndex = data.i

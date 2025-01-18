@@ -39,6 +39,7 @@ end
 -- Theme Object must be a table containing colors for every property, variable "properties" contains all required properties
 -- Theme Property must be a Color3 or Hex Color string
 -- Theme Object can be passed as a JSON string
+-- Returns success boolean and error message or Theme Object with Color3 properties
 function Utils.ValidateThemeFormat(theme)
     local properties = {"PrimaryTextColor", "SwitchThumbColor", "TextFieldPlaceholderTextColor", "SwitchTrackColor", "DividersColor", "WindowBackgroundColor", "DropdownToggleColor", "SecondaryTextColor", "HighlightColor", "DropdownListColor", "TextFieldBackgroundColor", "ScrollBarColor"}
     
@@ -54,7 +55,11 @@ function Utils.ValidateThemeFormat(theme)
     elseif typeof(theme) == "table" then
         themeObject = theme
     else
-        return false, "InvalidThemeObject: Theme must be of type string or table"
+        return false, "InvalidThemeObject: Theme Object must be of type string or table"
+    end
+
+    if typeof(themeObject.Name) ~= "string" then
+        return false, "InvalidThemeObject: Name is missing or invalid"
     end
 
     for property, color in themeObject do
@@ -66,20 +71,61 @@ function Utils.ValidateThemeFormat(theme)
             if success then
                 themeObject[property] = result
             else
-                return false, "InvalidThemeObject: Invalid hex color on property \""..property.."\""
+                return false, `InvalidThemeObject: Invalid hex color on property "{property}"`
             end
         elseif typeof(color) ~= "Color3" then
-            return false, "InvalidThemeObject: Invalid color type on property \""..property.."\""
+            return false, `InvalidThemeObject: Invalid color type on property "{property}"`
         end
 
         table.remove(properties, propertyIndex)
     end
 
     if #properties > 0 then
-        return false, "InvalidThemeObject: Missing "..#properties.." properties ("..table.concat(properties, ", ")..")"
+        return false, `InvalidThemeObject: Missing {#properties} properties ({table.concat(properties, ", ")})`
     end
 
     return true, themeObject
+end
+
+-- Validates Icon Format
+-- Icon Object must be a table
+-- "Image" is required property that represents Image ID
+-- "RectOffset" and "RectSize" are optional properties that are needed if Image is a sprite sheet
+function Utils.ValidateIconFormat(name, icon)
+    if typeof(name) ~= "string" then
+        return false, "InvalidIconObject: Icon Name must be a string"
+    end
+    
+    if typeof(icon) ~= "table" then
+        return false, "InvalidIconObject: Icon Object must be a table"
+    end
+
+    -- Required
+    if typeof(icon.Image) ~= "string" then
+        return false, "InvalidIconObject: Image missing or invalid"
+    end
+
+    -- Optional
+    if icon.RectOffset and typeof(icon.RectOffset) ~= "Vector2" then
+        return false, "InvalidIconObject: RectOffset must be a Vector2"
+    end
+
+    -- Optional
+    if icon.RectOffset and typeof(icon.RectOffset) ~= "Vector2" then
+        return false, "InvalidIconObject: RectOffset must be a Vector2"
+    end
+
+    return true
+end
+
+-- Validates User Setting
+function Utils.ValidateUserSetting(Library, setting, value)
+    if setting == "Theme" then
+        if not Library.Themes[value] then
+            error(`Theme "{value}" not found.`)
+        end
+    end
+    return true
 end
 
 return Utils

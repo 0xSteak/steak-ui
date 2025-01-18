@@ -1,5 +1,6 @@
-{
-  "Light": {
+[
+  {
+    "Name": "Dark",
     "PrimaryTextColor": "000000",
     "DividersColor": "cdcdcd",
     "TextFieldPlaceholderTextColor": "505050",
@@ -13,7 +14,8 @@
     "DropdownListColor": "d7d7d7",
     "HighlightColor": "ff4141"
   },
-  "Dark": {
+  {
+    "Name": "Light",
     "PrimaryTextColor": "ffffff",
     "DividersColor": "323232",
     "TextFieldPlaceholderTextColor": "afafaf",
@@ -27,4 +29,4 @@
     "DropdownListColor": "282828",
     "HighlightColor": "ff4141"
   }
-}
+]
