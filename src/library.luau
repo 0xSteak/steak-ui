@@ -81,6 +81,4 @@ function Library:Setup(librarySettings, userSettings)
     end
 end
 
-Library.CreateWindow = Library.Elements.Window.new
-
 return Library
