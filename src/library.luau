@@ -94,7 +94,7 @@ function Library:Setup(librarySettings, userSettings)
         -- Check if setting exists in "options" argument
         if userSettings[setting] then
             -- Check if setting is theme and this theme exists
-            if setting == "Theme" and not Library.Themes[value] then
+            if setting == "Theme" and not Library.Themes[userSettings[setting]] then
                 error(`Theme "{value}" not found.`)
             end
             -- Check if type is the same
