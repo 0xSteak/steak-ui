@@ -65,6 +65,10 @@ function Library:Setup(librarySettings, userSettings)
         error(`Invalid argument #2 (expected "table", got "{typeof(userSettings)}")`)
     end
 
+    -- In case of nil arguments
+    librarySettings = librarySettings or {}
+    userSettings = userSettings or {}
+
     -- Initializing tables
     Library.Settings = {}
     Library.UserSettings = {}
