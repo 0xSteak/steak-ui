@@ -1,6 +1,6 @@
 --[[
     Utilities Module
-    utils.lua
+    [ utils.lua ]
 
     Project: Steak UI Library
     Author: 0xSteak
@@ -9,7 +9,7 @@
 
 local Utils = {}
 
--- Services
+-- ( Services )
 local Players = game:GetService("Players")
 local HttpService = game:GetService("HttpService")
 
@@ -26,7 +26,7 @@ function Utils.GetGuiStorage()
         end
 
         if not storage then
-            error("An error occured while loading Steak UI library: Cannot find storage for GUI")
+            error("Steak UI library: Cannot find storage for GUI")
         end
 
         return storage
@@ -80,14 +80,6 @@ function Utils.ValidateThemeFormat(theme)
     end
 
     return true, themeObject
-end
-
-function Utils.MergeTable(baseTable, overrideTable)
-    for key, value in overrideTable do
-        if baseTable[key] then
-            
-        end
-    end
 end
 
 return Utils

@@ -1,63 +1,37 @@
 --[[
     Library Main
-    library.lua
+    [ library.lua ]
 
     Project: Steak UI Library
     Author: 0xSteak
     Github: https://github.com/0xSteak/steak-ui
 ]]
 
-local Library = {}
+local Library = {
+    Icons = {}
+}
 
--- ( Services )
-local HttpService = game:GetService("HttpService")
-
--- ( Constants )
--- Default UI Font
-local FONT = Font.new("rbxasset://fonts/families/Ubuntu.json", Enum.FontWeight.Regular, Enum.FontStyle.Normal)
--- Themes Database
-local THEMES = "https://raw.githubusercontent.com/0xSteak/steak-ui/refs/heads/main/registry/themes.json"
--- Icons Database
-local ICONS = "https://raw.githubusercontent.com/0xSteak/steak-ui/refs/heads/main/registry/icons.json"
-
--- Import Module from github repository
+-- Import Module from Github repository
 local function import(file)
     local AUTHOR = "0xSteak"
     local REPO = "steak-ui"
     local BRANCH = "main"
+    local SOURCE_PATH = "src/"
 
-    return loadstring(game:HttpGetAsync(`https://raw.githubusercontent.com/{AUTHOR}/{REPO}/refs/heads/{BRANCH}/{file}.luau`))()
-end
-
--- ( Importing Themes )
-local ThemesJSON = game:HttpGetAsync(THEMES)
-Library.Themes = HttpService:JSONDecode(ThemesJSON)
-
--- ( Importing Icons )
-Library.Icons = {}
-local IconsJSON = game:HttpGetAsync(ICONS)
-local Icons = HttpService:JSONDecode(IconsJSON)
-for name, data in Icons.icons do
-    local sheetIndex = data.i
-    local sheetId = Icons.sheets[sheetIndex]
-    local positionX = data.p[1]
-    local positionY = data.p[2]
-    local sizeX = if data.s then data.s[1] else 64
-    local sizeY = if data.s then data.s[2] else 64
-
-    Library.Icons[name] = {
-        Image = "rbxassetid://" .. sheetId,
-        RectOffset = Vector2.new(positionX, positionY),
-        RectSize = Vector2.new(sizeX, sizeY)
-    }
+    return loadstring(game:HttpGetAsync(`https://raw.githubusercontent.com/{AUTHOR}/{REPO}/refs/heads/{BRANCH}/{SOURCE_PATH}{file}.luau`))()
 end
 
 -- ( Importing Modules )
 local Utils = import("utils")
+local Registry = import("registry")
 Library.Utils = Utils
+Library.Registry = Registry
 Library.Elements = {
     Window = import("elements/window")
 }
+
+-- ( Importing Themes )
+Library.Themes = Registry.GetThemes()
 
 -- ( Creating ScreenGui )
 local ScreenGui = Instance.new("ScreenGui")
@@ -67,25 +41,44 @@ ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Global
 Library.ScreenGui = ScreenGui
 
 -- Sets up the Library before using it
-function Library:Setup(options)
+function Library:Setup(librarySettings, userSettings)
     local Library = self
 
-    local DefaultSettings = {
-        Font = FONT
-    }
-    local DefaultUserSettings = {
-        Theme = Library
-    }
+    -- Initializing tables
+    Library.Settings = {}
+    Library.UserSettings = {}
 
     -- Technical settings of the library
-    Library.Settings = {
-        Font = options.Font or FONT
-    }
+    for setting, value in Registry.DefaultSettings do
+        -- If setting exists in "options" argument
+        if librarySettings[setting] then
+            -- If type is the same
+            if typeof(librarySettings[setting]) == typeof(value) then
+                Library.Settings[setting] = librarySettings[setting]
+            else
+                error(`Invalid type for option "{setting}": expected "{typeof(value)}", got "{typeof(librarySettings[setting])}"`)
+            end
+        else
+            -- Set setting value as default
+            Library.Settings[setting] = value
+        end
+    end
 
     -- Settings that can be changed by the user
-    Library.UserSettings = {
-        Theme = options.Theme
-    }
+    for setting, value in Registry.DefaultUserSettings do
+        -- If setting exists in "options" argument
+        if userSettings[setting] then
+            -- If type is the same
+            if typeof(userSettings[setting]) == typeof(value) then
+                Library.Settings[setting] = userSettings[setting]
+            else
+                error(`Invalid type for option "{setting}": expected "{typeof(value)}", got "{typeof(userSettings[setting])}"`)
+            end
+        else
+            -- Set setting value as default
+            Library.UserSettings[setting] = value
+        end
+    end
 end
 
 Library.CreateWindow = Library.Elements.Window.new

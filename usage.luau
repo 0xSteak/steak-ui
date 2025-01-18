@@ -1,0 +1,1 @@
+local Library = loadstring(game:HttpGetAsync("https://raw.githubusercontent.com/0xSteak/steak-ui/refs/heads/main/src/library.luau"))()
