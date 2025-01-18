@@ -93,12 +93,13 @@ function Library:Setup(librarySettings, userSettings)
     for setting, value in Registry.DefaultUserSettings do
         -- Check if setting exists in "options" argument
         if userSettings[setting] then
-            -- Check if setting is theme and this theme exists
-            if setting == "Theme" and not Library.Themes[userSettings[setting]] then
-                error(`Theme "{userSettings[setting]}" not found.`)
-            end
             -- Check if type is the same
             if typeof(userSettings[setting]) == typeof(value) then
+                -- Check if setting is theme and this theme exists
+                if setting == "Theme" and not Library.Themes[userSettings[setting]] then
+                    error(`Theme "{userSettings[setting]}" not found.`)
+                end
+
                 Library.UserSettings[setting] = userSettings[setting]
             else
                 error(`Invalid type for option "{setting}": expected "{typeof(value)}", got "{typeof(userSettings[setting])}"`)
@@ -136,7 +137,7 @@ function Library:ImportRawIcon(name, icon)
 end
 
 -- Imports Icon from Registry
-function Library.ImportIcon(name)
+function Library:ImportIcon(name)
     local icon = Registry.GetIcon(name)
     if icon then
         Library.Icons[name] = icon
